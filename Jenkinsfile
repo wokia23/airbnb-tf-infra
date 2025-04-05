@@ -1,3 +1,8 @@
+def COLOR_MAP = [
+    'SUCCESS': 'good',
+    'FAILURE': 'danger',
+    ]
+
 pipeline {
     agent any
     
@@ -38,6 +43,12 @@ pipeline {
                 sh 'terraform ${action} --auto-approve'
             }
         }
-        
+    }
+
+    post {
+        success {
+            echo 'fantastic job, send build result'
+            slackSend channel: "#et-devops-team", color: COLOR_MAP[currentBuild.currentResult], message: "Build Started by wokia: ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+        }
     }
 }
